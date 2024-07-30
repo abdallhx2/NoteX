@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:notex/bloc/note_bloc.dart';
 import 'package:notex/bloc/note_event.dart';
 import 'package:notex/bloc/note_state.dart';
+import 'package:notex/database/Firebase/firebase_options.dart';
 import 'package:notex/pages/homePage/showNote.dart';
 import 'package:notex/pages/notePage.dart';
 
@@ -17,7 +18,9 @@ class body extends StatelessWidget {
         actions: [
           IconButton(
             icon: Icon(Icons.update),
-            onPressed: () {
+            onPressed: () async {
+              final String userId = 'dummyUserId'; // معرف مستخدم وهمي
+              await SyncService().fullSync(userId);
               BlocProvider.of<NoteBloc>(context).add(LoadNotesEvent());
             },
           )

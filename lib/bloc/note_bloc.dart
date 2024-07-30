@@ -1,11 +1,13 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:notex/repositories/note_repository.dart';
+import 'package:notex/database/Firebase/firebase_options.dart';
+import 'package:notex/database/SQLite/database_helper.dart';
 import 'note_event.dart';
 import 'note_state.dart';
 
 // note_bloc.dart
 class NoteBloc extends Bloc<NoteEvent, NoteState> {
-  final NoteRepository noteRepository;
+  final DBConnection noteRepository;
+  final SyncService _syncService = SyncService(); // تأكد من إنشاء نسخة من SyncService
 
   NoteBloc({required this.noteRepository}) : super(NotesLoading()) {
     on<LoadNotesEvent>(_onLoadNotes);
@@ -55,14 +57,14 @@ class NoteBloc extends Bloc<NoteEvent, NoteState> {
     }
   }
 
-  Future<void> _onSearchNotes(SearchNotesEvent event, Emitter<NoteState> emit) async {
+  Future<void> _onSearchNotes(
+      SearchNotesEvent event, Emitter<NoteState> emit) async {
     emit(NotesLoading());
     try {
       final notes = await noteRepository.searchNotes(event.query);
       emit(NotesSearchResult(searchResults: notes));
     } catch (e) {
-      emit( NotesError(message: e.toString()));
+      emit(NotesError(message: e.toString()));
     }
   }
 }
-
