@@ -2,8 +2,9 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:notex/bloc/note_bloc.dart';
-import 'package:notex/database/SQLite/database_helper.dart';
-import 'package:notex/pages/homePage/body.dart';
+import 'package:notex/database/SQLite/database_connction.dart';
+import 'package:notex/pages/auth_pages/authLogin.dart';
+import 'package:notex/route/appRoute.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -23,7 +24,9 @@ class MyApp extends StatelessWidget {
       home: BlocProvider(
         create: (context) => NoteBloc(noteRepository: _dbConnection),
         child: MaterialApp(
-          home: body(),
+          home: LoginPage(),
+          initialRoute: AppRoutes.login,
+          onGenerateRoute: AppRoutes.generateRoute,
         ),
       ),
     );

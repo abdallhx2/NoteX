@@ -18,14 +18,14 @@ class DBConnection {
 
   Future<Database> initDatabase() async {
     final dbPath = await getDatabasesPath();
-    final path = join(dbPath, 'note_database.db');
+    final path = join(dbPath, 'note_databas.db');
 
     return await openDatabase(
       path,
       version: 1,
       onCreate: (db, version) {
         return db.execute(
-          "CREATE TABLE notes(id TEXT PRIMARY KEY, title TEXT, content TEXT, date TEXT)",
+          "CREATE TABLE notes(id TEXT PRIMARY KEY, title TEXT, content TEXT, date TEXT, lastUpdated TEXT)",
         );
       },
     );

@@ -7,7 +7,7 @@ import 'package:notex/database/Firebase/firebase_options.dart';
 import 'package:notex/pages/homePage/showNote.dart';
 import 'package:notex/pages/notePage.dart';
 
-class body extends StatelessWidget {
+class HomeBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final TextEditingController _searchController = TextEditingController();

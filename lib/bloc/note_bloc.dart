@@ -1,6 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:notex/database/Firebase/firebase_options.dart';
-import 'package:notex/database/SQLite/database_helper.dart';
+import 'package:notex/database/SQLite/database_connction.dart';
 import 'note_event.dart';
 import 'note_state.dart';
 

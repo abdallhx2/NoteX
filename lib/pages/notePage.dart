@@ -57,7 +57,8 @@ class _NewNotePageState extends State<NewNotePage> {
                   id: widget.note?.id ?? DateTime.now().toString(),
                   title: _titleController.text,
                   content: _contentController.text,
-                  date: DateTime.now(),
+                  date: DateTime.now(), 
+                 lastUpdated: DateTime.now(),
                 );
 
                 if (widget.note == null) {
