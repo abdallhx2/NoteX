@@ -1,4 +1,3 @@
-import 'package:notex/models/note.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
@@ -18,81 +17,82 @@ class DBConnection {
 
   Future<Database> initDatabase() async {
     final dbPath = await getDatabasesPath();
-    final path = join(dbPath, 'note_databas.db');
+    final path = join(dbPath, 'note_database.db');
 
     return await openDatabase(
       path,
-      version: 1,
-      onCreate: (db, version) {
-        return db.execute(
-          "CREATE TABLE notes(id TEXT PRIMARY KEY, title TEXT, content TEXT, date TEXT, lastUpdated TEXT)",
+      version: 5,
+      onCreate: (db, version) async {
+        await db.execute(
+          "CREATE TABLE notes(id TEXT PRIMARY KEY, userId TEXT, title TEXT, content TEXT, date TEXT, lastUpdated TEXT)",
+        );
+        await db.execute(
+          "CREATE TABLE users(id TEXT PRIMARY KEY, name TEXT, email TEXT, phoneNumber TEXT)",
         );
       },
+
+      // onUpgrade: (db, oldVersion, newVersion) async {
+      //   if (oldVersion < 2) {
+      //     await db.execute("ALTER TABLE notes ADD COLUMN userId TEXT");
+      //   }
+      //   if (oldVersion < 4) {
+      //     await db.execute(
+      //       "CREATE TABLE users(id TEXT PRIMARY KEY, name TEXT, email TEXT, phoneNumber TEXT)",
+      //     );
+      //   }
+      // },
     );
   }
+}
 
-  Future<List<Note>> getNotes() async {
-    final db = await database;
-    final List<Map<String, dynamic>> maps = await db.query('notes');
+Future<void> initDatabaseWithFakeData() async {
+  final db = await DBConnection().database;
 
-    return List.generate(maps.length, (i) {
-      return Note.fromMap(maps[i]);
-    });
-  }
+  await insertFakeUsers(db);
+  await insertFakeNotes(db);
+}
 
-  Future<void> addNote(Note note) async {
-    final db = await database;
-    await db.insert(
-      'notes',
-      note.toMap(),
-      conflictAlgorithm: ConflictAlgorithm.replace,
-    );
-  }
+Future<void> insertFakeUsers(Database db) async {
+  await db.insert('users', {
+    'id': 'user1',
+    'name': 'John Doe',
+    'email': 'john.doe@example.com',
+    'phoneNumber': '123-456-7890'
+  });
 
-  Future<void> updateNote(Note updatedNote) async {
-    final db = await database;
-    await db.update(
-      'notes',
-      updatedNote.toMap(),
-      where: "id = ?",
-      whereArgs: [updatedNote.id],
-    );
-  }
+  await db.insert('users', {
+    'id': 'user2',
+    'name': 'Jane Smith',
+    'email': 'jane.smith@example.com',
+    'phoneNumber': '098-765-4321'
+  });
+}
 
-  Future<void> deleteNote(String id) async {
-    final db = await database;
-    await db.delete(
-      'notes',
-      where: "id = ?",
-      whereArgs: [id],
-    );
-  }
+Future<void> insertFakeNotes(Database db) async {
+  await db.insert('notes', {
+    'id': 'note1',
+    'userId': 'user1',
+    'title': 'First Note',
+    'content': 'This is the content of the first note.',
+    'date': '2024-08-01',
+    'lastUpdated': '2024-08-01T10:00:00Z'
+  });
 
-  Future<Note?> getNoteById(String id) async {
-    final db = await database;
-    final List<Map<String, dynamic>> maps = await db.query(
-      'notes',
-      where: "id = ?",
-      whereArgs: [id],
-    );
+  await db.insert('notes', {
+    'id': 'note2',
+    'userId': 'user1',
+    'title': 'Second Note',
+    'content': 'This is the content of the second note.',
+    'date': '2024-08-02',
+    'lastUpdated': '2024-08-02T12:00:00Z'
+  });
 
-    if (maps.isNotEmpty) {
-      return Note.fromMap(maps.first);
-    } else {
-      return null;
-    }
-  }
-
-  Future<List<Note>> searchNotes(String query) async {
-    final db = await database;
-    final List<Map<String, dynamic>> maps = await db.query(
-      'notes',
-      where: 'title LIKE ?',
-      whereArgs: ['%$query%'],
-    );
-
-    return List.generate(maps.length, (i) {
-      return Note.fromMap(maps[i]);
-    });
-  }
+  await db.insert('notes', {
+    'id': 'note3',
+    'userId': 'user2',
+    'title': 'Third Note',
+    'content': 'This is the content of the third note.',
+    'date': '2024-08-03',
+    'lastUpdated': '2024-08-03T14:00:00Z'
+  });
 }

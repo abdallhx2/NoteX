@@ -1,3 +1,5 @@
+
+
 import 'package:equatable/equatable.dart';
 import 'package:notex/models/note.dart';
 
@@ -35,4 +37,30 @@ class NotesSearchResult extends NoteState {
 
   @override
   List<Object> get props => [searchResults];
+}
+
+class NotesSynced extends NoteState {}
+
+class NotesSyncError extends NoteState {
+  final String message;
+
+  const NotesSyncError({required this.message});
+
+  @override
+  List<Object> get props => [message];
+}
+
+class SyncOptionsSet extends NoteState {
+  final bool autoSync;
+  final int syncInterval;
+  final bool syncOnWifiOnly;
+
+  const SyncOptionsSet({
+    required this.autoSync,
+    required this.syncInterval,
+    required this.syncOnWifiOnly,
+  });
+
+  @override
+  List<Object> get props => [autoSync, syncInterval, syncOnWifiOnly];
 }

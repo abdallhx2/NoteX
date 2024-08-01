@@ -2,8 +2,9 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:notex/bloc/note_bloc.dart';
-import 'package:notex/database/SQLite/database_connction.dart';
+import 'package:notex/database/Firebase/firebase_options.dart';
 import 'package:notex/pages/auth_pages/authLogin.dart';
+import 'package:notex/repositories/note_repository.dart';
 import 'package:notex/route/appRoute.dart';
 
 void main() async {
@@ -13,7 +14,7 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
-  final DBConnection _dbConnection = DBConnection();
+  final SyncService _syncService = SyncService();
 
   MyApp({super.key});
 
@@ -22,7 +23,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Notx',
       home: BlocProvider(
-        create: (context) => NoteBloc(noteRepository: _dbConnection),
+        create: (context) => NoteBloc(
+            noteRepository: NoteRepository(), syncService: _syncService),
         child: MaterialApp(
           home: LoginPage(),
           initialRoute: AppRoutes.login,

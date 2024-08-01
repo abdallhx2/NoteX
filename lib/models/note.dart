@@ -1,16 +1,18 @@
 class Note {
   final String id;
+  final String userId;
   final String title;
   final String content;
   final DateTime date;
-  final DateTime lastUpdated; // الحقل الجديد لتاريخ التحديث
+  final DateTime lastUpdated;
 
   Note({
     required this.id,
+    required this.userId,
     required this.title,
     required this.content,
     required this.date,
-    required this.lastUpdated, // التعديل هنا
+    required this.lastUpdated,
   });
 
   factory Note.fromMap(Map<String, dynamic> map) {
@@ -21,7 +23,8 @@ class Note {
       parsedDate = DateTime.parse(map['date']);
     } catch (e) {
       try {
-        parsedDate = DateTime.fromMillisecondsSinceEpoch(int.parse(map['date']));
+        parsedDate =
+            DateTime.fromMillisecondsSinceEpoch(int.parse(map['date']));
       } catch (e) {
         parsedDate = DateTime.now();
       }
@@ -31,13 +34,15 @@ class Note {
       parsedLastUpdated = DateTime.parse(map['lastUpdated']);
     } catch (e) {
       try {
-        parsedLastUpdated = DateTime.fromMillisecondsSinceEpoch(int.parse(map['lastUpdated']));
+        parsedLastUpdated =
+            DateTime.fromMillisecondsSinceEpoch(int.parse(map['lastUpdated']));
       } catch (e) {
         parsedLastUpdated = DateTime.now();
       }
     }
-    
+
     return Note(
+      userId: map['userId'],
       id: map['id'],
       title: map['title'],
       content: map['content'],
@@ -48,6 +53,7 @@ class Note {
 
   Map<String, dynamic> toMap() {
     return {
+      'userId': userId,
       'id': id,
       'title': title,
       'content': content,

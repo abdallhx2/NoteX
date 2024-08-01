@@ -45,3 +45,27 @@ class SearchNotesEvent extends NoteEvent {
   @override
   List<Object> get props => [query];
 }
+
+class SyncNotesEvent extends NoteEvent {
+  final String userId;
+
+  const SyncNotesEvent(this.userId);
+
+  @override
+  List<Object> get props => [userId];
+}
+
+class SetSyncOptionsEvent extends NoteEvent {
+  final bool autoSync;
+  final int syncInterval;
+  final bool syncOnWifiOnly;
+
+  const SetSyncOptionsEvent({
+    required this.autoSync,
+    required this.syncInterval,
+    required this.syncOnWifiOnly,
+  });
+
+  @override
+  List<Object> get props => [autoSync, syncInterval, syncOnWifiOnly];
+}

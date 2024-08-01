@@ -1,9 +1,11 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:notex/bloc/note_bloc.dart';
 import 'package:notex/bloc/note_event.dart';
 import 'package:notex/bloc/note_state.dart';
 import 'package:notex/database/Firebase/firebase_options.dart';
+import 'package:notex/database/SQLite/database_connction.dart';
 import 'package:notex/pages/homePage/showNote.dart';
 import 'package:notex/pages/notePage.dart';
 
@@ -19,9 +21,20 @@ class HomeBody extends StatelessWidget {
           IconButton(
             icon: Icon(Icons.update),
             onPressed: () async {
-              final String userId = 'dummyUserId'; // معرف مستخدم وهمي
-              await SyncService().fullSync(userId);
-              BlocProvider.of<NoteBloc>(context).add(LoadNotesEvent());
+              try {
+                // تأكد من تعيين userId بشكل صحيح
+                final userId = await FirebaseAuth.instance.currentUser?.uid;
+                if (userId != null) {
+                  await SyncService().fullSync(userId); // تمرير userId هنا
+                  BlocProvider.of<NoteBloc>(context).add(LoadNotesEvent());
+                  await initDatabaseWithFakeData(); // تأكد من وجود بيانات وهمية فقط عند الحاجة
+                } else {
+                  // التعامل مع حالة عدم وجود userId
+                  print('User is not logged in');
+                }
+              } catch (e) {
+                print('Error occurred: $e');
+              }
             },
           )
         ],

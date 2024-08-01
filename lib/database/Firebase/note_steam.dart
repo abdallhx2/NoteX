@@ -1,26 +1,37 @@
-// استيراد مكتبات Flutter الضرورية
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:notex/models/note.dart';
 
 class NoteStream {
-  // إنشاء مثيل من FirebaseFirestore للتفاعل مع قاعدة بيانات Firestore
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  // دالة لإرجاع Stream من قائمة الملاحظات
   Stream<List<Note>> getNotesStream() {
-    // الحصول على Stream من مجموعة 'notes' في Firestore
-    return _firestore.collection('notes').snapshots().map((snapshot) {
-      // تحويل بيانات الوثائق إلى قائمة من كائنات Note
+    // الحصول على المستخدم الحالي
+    User? user = _auth.currentUser;
+    if (user == null) {
+      // إذا لم يكن هناك مستخدم مسجل الدخول، قم بإرجاع stream فارغ
+      return Stream.value([]);
+    }
+
+    // الحصول على Stream من مجموعة 'notes' الخاصة بالمستخدم الحالي في Firestore
+    return _firestore
+        .collection('users')
+        .doc(user.uid)
+        .collection('notes')
+        .snapshots()
+        .map((snapshot) {
       return snapshot.docs.map((doc) {
-        final data = doc.data(); // الحصول على بيانات الوثيقة
+        final data = doc.data();
         return Note(
-          id: doc.id, // استخدام معرف الوثيقة كمُعرف للملاحظة
-          title: data['title'] ?? '', // الحصول على عنوان الملاحظة
-          content: data['content'] ?? '', // الحصول على محتوى الملاحظة
-          date: (data['date'] as Timestamp).toDate(), // تحويل تاريخ الوثيقة من نوع Timestamp إلى DateTime
-          lastUpdated: (data['lastUpdated'] as Timestamp?)?.toDate() ?? DateTime.now(), // تحويل آخر تحديث من نوع Timestamp إلى DateTime، أو تعيين الوقت الحالي إذا لم يكن موجودًا
+          id: doc.id,
+          userId: user.uid, // إضافة معرف المستخدم
+          title: data['title'] ?? '',
+          content: data['content'] ?? '',
+          date: (data['date'] as Timestamp).toDate(),
+          lastUpdated: (data['lastUpdated'] as Timestamp?)?.toDate() ?? DateTime.now(),
         );
-      }).toList(); // تحويل جميع الوثائق إلى قائمة من كائنات Note
+      }).toList();
     });
   }
 }
