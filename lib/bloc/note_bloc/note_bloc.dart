@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:notex/bloc/user_bloc/user_bloc.dart';
 import 'package:notex/database/Firebase/firebase_options.dart';
 import 'package:notex/repositories/note_repository.dart';
 import 'note_event.dart';
@@ -33,8 +34,11 @@ class NoteBloc extends Bloc<NoteEvent, NoteState> {
 
   Future<void> _onAddNote(AddNoteEvent event, Emitter<NoteState> emit) async {
     try {
-      await noteRepository.addNote(event.note);
-      await syncService.syncNote(event.note);
+      final userId = await syncService.getUserId(); // الحصول على userId
+      final noteWithUserId =
+          event.note.copyWith(userId: userId); // إضافة userId
+      await noteRepository.addNote(noteWithUserId);
+      await syncService.syncNote(noteWithUserId);
       add(LoadNotesEvent());
     } catch (e) {
       emit(NotesError(message: e.toString()));
@@ -44,8 +48,11 @@ class NoteBloc extends Bloc<NoteEvent, NoteState> {
   Future<void> _onUpdateNote(
       UpdateNoteEvent event, Emitter<NoteState> emit) async {
     try {
-      await noteRepository.updateNote(event.note);
-      await syncService.syncNote(event.note);
+      final userId = await syncService.getUserId(); // الحصول على userId
+      final noteWithUserId =
+          event.note.copyWith(userId: userId); // إضافة userId
+      await noteRepository.updateNote(noteWithUserId);
+      await syncService.syncNote(noteWithUserId);
       add(LoadNotesEvent());
     } catch (e) {
       emit(NotesError(message: e.toString()));
@@ -56,7 +63,6 @@ class NoteBloc extends Bloc<NoteEvent, NoteState> {
       DeleteNoteEvent event, Emitter<NoteState> emit) async {
     try {
       await noteRepository.deleteNote(event.id);
-      // Здесь нужно добавить удаление заметки из облака
       add(LoadNotesEvent());
     } catch (e) {
       emit(NotesError(message: e.toString()));

@@ -5,21 +5,22 @@ import 'package:notex/models/note.dart';
 import 'package:sqflite/sqflite.dart';
 
 class NoteRepository {
-  final dbConnection = DBConnection();
+  final dbConnection = DBConnection();Future<List<Note>> getNotes(String userId) async {
+  final db = await dbConnection.database;
 
-  Future<List<Note>> getNotes(String userId) async {
-    final db = await dbConnection.database;
-    final List<Map<String, dynamic>> maps = await db.query(
-      'notes',
-      where: "userId = ?",
-      whereArgs: [userId],
-    );
+  
+  final List<Map<String, dynamic>> maps = await db.query(
+    'notes',
+    where: "userId = ?",
+    whereArgs: [userId],
+  );
 
-    return List.generate(maps.length, (i) {
-      return Note.fromMap(maps[i]);
-    });
-  }
+  return List.generate(maps.length, (i) {
+    return Note.fromMap(maps[i]);
+  });
+}
 
+ 
   Future<void> addNote(Note note) async {
     final db = await dbConnection.database;
     await db.insert(

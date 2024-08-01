@@ -1,11 +1,15 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:notex/bloc/note_bloc.dart';
+import 'package:notex/bloc/note_bloc/note_bloc.dart';
+import 'package:notex/bloc/user_bloc/user_bloc.dart';
 import 'package:notex/database/Firebase/firebase_options.dart';
 import 'package:notex/pages/auth_pages/authLogin.dart';
+import 'package:notex/pages/homePage/body.dart';
 import 'package:notex/repositories/note_repository.dart';
+import 'package:notex/repositories/user_repository.dart';
 import 'package:notex/route/appRoute.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -14,23 +18,71 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
-  final SyncService _syncService = SyncService();
+  final UserRepository userRepository = UserRepository();
+  final SyncService syncService = SyncService();
+  final NoteRepository noteRepository = NoteRepository();
+  @override
+  Widget build(BuildContext context) {
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => UserBloc(
+            userRepository: userRepository,
+            syncService: syncService,
+          ),
+        ),
+        BlocProvider(
+          create: (context) => NoteBloc(
+              noteRepository: noteRepository, syncService: syncService),
+        ),
+      ],
+      child: MaterialApp(
+        title: 'Notex',
+        initialRoute: AppRoutes.login,
+        onGenerateRoute: AppRoutes.generateRoute,
+      ),
+    );
+  }
+}
 
-  MyApp({super.key});
+class AuthChecker extends StatefulWidget {
+  @override
+  _AuthCheckerState createState() => _AuthCheckerState();
+}
+
+class _AuthCheckerState extends State<AuthChecker> {
+  bool _isLoggedIn = false;
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkLoginStatus();
+  }
+
+  Future<void> _checkLoginStatus() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? userId = prefs.getString('userId');
+
+    if (userId != null && userId.isNotEmpty) {
+      setState(() {
+        _isLoggedIn = true;
+      });
+    }
+
+    setState(() {
+      _isLoading = false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Notx',
-      home: BlocProvider(
-        create: (context) => NoteBloc(
-            noteRepository: NoteRepository(), syncService: _syncService),
-        child: MaterialApp(
-          home: LoginPage(),
-          initialRoute: AppRoutes.login,
-          onGenerateRoute: AppRoutes.generateRoute,
-        ),
-      ),
-    );
+    if (_isLoading) {
+      return Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    } else {
+      return _isLoggedIn ? HomeBody() : SignInPage();
+    }
   }
 }

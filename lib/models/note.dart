@@ -15,6 +15,25 @@ class Note {
     required this.lastUpdated,
   });
 
+   // دالة copyWith
+  Note copyWith({
+    String? id,
+    String? title,
+    String? content,
+    DateTime? date,
+    DateTime? lastUpdated,
+    String? userId,
+  }) {
+    return Note(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      content: content ?? this.content,
+      date: date ?? this.date,
+      lastUpdated: lastUpdated ?? this.lastUpdated,
+      userId: userId ?? this.userId,
+    );
+  }
+
   factory Note.fromMap(Map<String, dynamic> map) {
     DateTime parsedDate;
     DateTime parsedLastUpdated;

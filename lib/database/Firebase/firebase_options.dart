@@ -4,6 +4,7 @@ import 'package:notex/models/note.dart';
 import 'package:notex/models/user.dart' as AppUser;
 import 'package:notex/repositories/note_repository.dart';
 import 'package:notex/repositories/user_repository.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SyncService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -18,7 +19,16 @@ class SyncService {
     }
     return user.uid;
   }
+  Future<void> saveUserId(String userId) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('userId', userId);
+  }
 
+  // مسح userId من SharedPreferences
+  Future<void> clearUserId() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('userId');
+  }
   // دالة لمزامنة البيانات من قاعدة البيانات المحلية إلى Firestore
   Future<void> syncToCloud() async {
     String userId = await getUserId();
