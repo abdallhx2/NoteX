@@ -4,25 +4,38 @@ import 'package:notex/bloc/user_bloc/user_bloc.dart';
 import 'package:notex/bloc/user_bloc/user_event.dart';
 import 'package:notex/bloc/user_bloc/user_state.dart';
 import 'package:notex/pages/auth_pages/authSignup.dart';
-import 'package:notex/pages/homePage/body.dart';
 
-class SignInPage extends StatelessWidget {
+class SignInPage extends StatefulWidget {
+  @override
+  State<SignInPage> createState() => _SignInPageState();
+}
+
+class _SignInPageState extends State<SignInPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Sign In')),
+      appBar: AppBar(
+        title: Text('Sign In'),
+        automaticallyImplyLeading: false,
+      ),
       body: BlocListener<UserBloc, UserState>(
         listener: (context, state) {
           if (state is UserLoggedIn) {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => HomeBody()),
-            );
+            Navigator.pushReplacementNamed(context, '/home');
           } else if (state is UserError) {
-            // إظهار رسالة خطأ
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text(state.message)),
             );

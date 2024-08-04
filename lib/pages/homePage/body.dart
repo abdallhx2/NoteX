@@ -6,10 +6,12 @@ import 'package:notex/bloc/note_bloc/note_event.dart';
 import 'package:notex/bloc/note_bloc/note_state.dart';
 import 'package:notex/bloc/user_bloc/user_bloc.dart';
 import 'package:notex/bloc/user_bloc/user_event.dart';
+import 'package:notex/bloc/user_bloc/user_state.dart';
 import 'package:notex/database/Firebase/firebase_options.dart';
 import 'package:notex/database/SQLite/database_connction.dart';
 import 'package:notex/pages/homePage/showNote.dart';
 import 'package:notex/pages/notePage.dart';
+import 'package:notex/repositories/user_repository.dart';
 
 // class HomeBody extends StatelessWidget {
 //   @override
@@ -42,14 +44,38 @@ import 'package:notex/pages/notePage.dart';
 //     );
 //   }
 // }
-class HomeBody extends StatelessWidget {
+class HomeBody extends StatefulWidget {
+  @override
+  State<HomeBody> createState() => _HomeBodyState();
+}
+
+class _HomeBodyState extends State<HomeBody> {
+  final UserRepository _userRepository = UserRepository();
+
+  void initState() {
+    super.initState();
+    context.read<NoteBloc>().add(LoadNotesEvent());
+    context.read<UserBloc>().add(LoadUserEvent());
+  }
+
   @override
   Widget build(BuildContext context) {
     final TextEditingController _searchController = TextEditingController();
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Notex'),
+        automaticallyImplyLeading: false,
+        title: BlocBuilder<UserBloc, UserState>(
+          builder: (context, state) {
+            if (state is UserNameLoaded) {
+              return Text(state.userName); 
+            } else if (state is UserError) {
+              return Text('Error: ${state.message}');
+            } else {
+              return Text('Loading...');
+            }
+          },
+        ),
         actions: [
           IconButton(
             icon: Icon(Icons.update),
@@ -57,10 +83,8 @@ class HomeBody extends StatelessWidget {
               try {
                 final userId = FirebaseAuth.instance.currentUser?.uid;
                 if (userId != null) {
-                  await SyncService().fullSync(
-                      userId); // تأكد من وجود هذه الدالة في SyncService
+                  await SyncService().fullSync(userId);
                   BlocProvider.of<NoteBloc>(context).add(LoadNotesEvent());
-                  // لا حاجة لدالة initDatabaseWithFakeData هنا، قم بإدخال البيانات الوهمية عند الحاجة فقط
                 } else {
                   print('User is not logged in');
                 }
@@ -103,12 +127,9 @@ class HomeBody extends StatelessWidget {
             ElevatedButton(
               onPressed: () async {
                 try {
-                  // Trigger the logout event in Bloc
-                  context.read<UserBloc>().add(LogoutEvent());
-                  await FirebaseAuth.instance.signOut();
+                  _userRepository.logout();
                   Navigator.pushReplacementNamed(context, '/login');
                 } catch (e) {
-                  // Handle logout errors if needed
                   print('Logout failed: ${e.toString()}');
                 }
               },
@@ -134,3 +155,14 @@ class HomeBody extends StatelessWidget {
     );
   }
 }
+
+// void displayUserName(String userId) async {
+//   final userName = await UserRegistered.getUserNameById(userId);
+  
+//   if (userName != null) {
+//     print('User Name: $userName');
+//     // يمكنك استخدام اسم المستخدم هنا، مثل تحديث واجهة المستخدم
+//   } else {
+//     print('User not found');
+//   }
+// }

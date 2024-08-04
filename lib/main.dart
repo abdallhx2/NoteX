@@ -17,10 +17,16 @@ void main() async {
   runApp(MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
   final UserRepository userRepository = UserRepository();
   final SyncService syncService = SyncService();
   final NoteRepository noteRepository = NoteRepository();
+
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
@@ -38,51 +44,51 @@ class MyApp extends StatelessWidget {
       ],
       child: MaterialApp(
         title: 'Notex',
-        initialRoute: AppRoutes.login,
+        initialRoute: AppRoutes.splash,
         onGenerateRoute: AppRoutes.generateRoute,
       ),
     );
   }
 }
 
-class AuthChecker extends StatefulWidget {
-  @override
-  _AuthCheckerState createState() => _AuthCheckerState();
-}
+// class AuthChecker extends StatefulWidget {
+//   @override
+//   _AuthCheckerState createState() => _AuthCheckerState();
+// }
 
-class _AuthCheckerState extends State<AuthChecker> {
-  bool _isLoggedIn = false;
-  bool _isLoading = true;
+// class _AuthCheckerState extends State<AuthChecker> {
+//   bool _isLoggedIn = false;
+//   bool _isLoading = true;
 
-  @override
-  void initState() {
-    super.initState();
-    _checkLoginStatus();
-  }
+//   @override
+//   void initState() {
+//     super.initState();
+//     _checkLoginStatus();
+//   }
 
-  Future<void> _checkLoginStatus() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? userId = prefs.getString('userId');
+//   Future<void> _checkLoginStatus() async {
+//     SharedPreferences prefs = await SharedPreferences.getInstance();
+//     String? userId = prefs.getString('userId');
 
-    if (userId != null && userId.isNotEmpty) {
-      setState(() {
-        _isLoggedIn = true;
-      });
-    }
+//     if (userId != null && userId.isNotEmpty) {
+//       setState(() {
+//         _isLoggedIn = true;
+//       });
+//     }
 
-    setState(() {
-      _isLoading = false;
-    });
-  }
+//     setState(() {
+//       _isLoading = false;
+//     });
+//   }
 
-  @override
-  Widget build(BuildContext context) {
-    if (_isLoading) {
-      return Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      );
-    } else {
-      return _isLoggedIn ? HomeBody() : SignInPage();
-    }
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     if (_isLoading) {
+//       return Scaffold(
+//         body: Center(child: CircularProgressIndicator()),
+//       );
+//     } else {
+//       return _isLoggedIn ? HomeBody() : SignInPage();
+//     }
+//   }
+// }

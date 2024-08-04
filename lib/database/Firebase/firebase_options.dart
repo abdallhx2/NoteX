@@ -19,16 +19,10 @@ class SyncService {
     }
     return user.uid;
   }
-  Future<void> saveUserId(String userId) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('userId', userId);
-  }
 
-  // مسح userId من SharedPreferences
-  Future<void> clearUserId() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.remove('userId');
-  }
+
+ 
+  
   // دالة لمزامنة البيانات من قاعدة البيانات المحلية إلى Firestore
   Future<void> syncToCloud() async {
     String userId = await getUserId();
@@ -111,18 +105,18 @@ class SyncService {
     await syncFromCloud();
   }
 
-  // دالة لمزامنة بيانات المستخدم
-  Future<void> syncUserData() async {
-    String userId = await getUserId();
-    AppUser.UserModels? localUser = await _userRepository.getUserById(userId);
+  // // دالة لمزامنة بيانات المستخدم
+  // Future<void> syncUserData() async {
+  //   String userId = await getUserId();
+  //   AppUser.UserModels? localUser = await _userRepository.getUserById(userId);
     
-    if (localUser != null) {
-      await _firestore
-          .collection('users')
-          .doc(userId)
-          .set(localUser.toMap());
-    }
-  }
+  //   if (localUser != null) {
+  //     await _firestore
+  //         .collection('users')
+  //         .doc(userId)
+  //         .set(localUser.toMap());
+  //   }
+  // }
 
   // دالة لاسترجاع بيانات المستخدم من Firestore
   Future<void> fetchUserDataFromCloud() async {
@@ -135,47 +129,6 @@ class SyncService {
     if (userDoc.exists) {
       AppUser.UserModels cloudUser = AppUser.UserModels.fromMap(userDoc.data() as Map<String, dynamic>);
       await _userRepository.updateUser(cloudUser);
-    }
-  }
-
-  // دالة لتحديد خيارات المزامنة
-  Future<void> setSyncOptions({
-    required bool autoSync,
-    required int syncInterval,
-    required bool syncOnWifiOnly,
-  }) async {
-    String userId = await getUserId();
-    await _firestore
-        .collection('users')
-        .doc(userId)
-        .collection('settings')
-        .doc('syncOptions')
-        .set({
-      'autoSync': autoSync,
-      'syncInterval': syncInterval,
-      'syncOnWifiOnly': syncOnWifiOnly,
-    });
-  }
-
-  // دالة للحصول على خيارات المزامنة
-  Future<Map<String, dynamic>> getSyncOptions() async {
-    String userId = await getUserId();
-    DocumentSnapshot optionsDoc = await _firestore
-        .collection('users')
-        .doc(userId)
-        .collection('settings')
-        .doc('syncOptions')
-        .get();
-
-    if (optionsDoc.exists) {
-      return optionsDoc.data() as Map<String, dynamic>;
-    } else {
-      // القيم الافتراضية
-      return {
-        'autoSync': true,
-        'syncInterval': 15, // بالدقائق
-        'syncOnWifiOnly': false,
-      };
     }
   }
 }

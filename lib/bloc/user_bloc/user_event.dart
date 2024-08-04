@@ -10,14 +10,6 @@ abstract class UserEvent extends Equatable {
 
 class LoadUserEvent extends UserEvent {}
 
-class AddUserEvent extends UserEvent {
-  final UserModels user;
-
-  const AddUserEvent({required this.user});
-
-  @override
-  List<Object> get props => [user];
-}
 
 class UpdateUserEvent extends UserEvent {
   final UserModels user;
@@ -27,16 +19,6 @@ class UpdateUserEvent extends UserEvent {
   @override
   List<Object> get props => [user];
 }
-
-class DeleteUserEvent extends UserEvent {
-  final String id;
-
-  const DeleteUserEvent({required this.id});
-
-  @override
-  List<Object> get props => [id];
-}
-
 
 
 class LoginEvent extends UserEvent {
@@ -49,15 +31,23 @@ class LoginEvent extends UserEvent {
   List<Object?> get props => [email, password];
 }
 
-
-
 class LogoutEvent extends UserEvent {}
+
 class RegisterEvent extends UserEvent {
+  final String phoneNumber;
+  final String name;
   final String email;
   final String password;
 
-  RegisterEvent({required this.email, required this.password});
+  RegisterEvent(this.phoneNumber, this.name,
+      {required this.email, required this.password});
 
   @override
-  List<Object?> get props => [email, password];
+  List<Object?> get props => [name, phoneNumber, email, password];
+}
+
+class GetUserNameEvent extends UserEvent {
+  final String userId;
+
+  GetUserNameEvent({required this.userId});
 }

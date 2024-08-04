@@ -37,16 +37,16 @@ class UserLoggedIn extends UserState {
 
 }
 
-class UserLoggedOut extends UserState {}
-
 class UserRegistered extends UserState {
   final UserModels user;
 
   UserRegistered({required this.user});
 
   @override
-  List<Object> get props => [user];
+List<Object> get props => [user];
 }
+class UserLoggedOut extends UserState {}
+
 
 class UserNotRegistered extends UserState {
   final String message;
@@ -55,4 +55,10 @@ class UserNotRegistered extends UserState {
 
   @override
   List<Object> get props => [message];
+}
+// user_state.dart
+class UserNameLoaded extends UserState {
+  final String userName;
+
+  UserNameLoaded({required this.userName});
 }

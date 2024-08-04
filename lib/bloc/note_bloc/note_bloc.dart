@@ -17,7 +17,6 @@ class NoteBloc extends Bloc<NoteEvent, NoteState> {
     on<DeleteNoteEvent>(_onDeleteNote);
     on<SearchNotesEvent>(_onSearchNotes);
     on<SyncNotesEvent>(_onSyncNotes);
-    on<SetSyncOptionsEvent>(_onSetSyncOptions);
   }
 
   Future<void> _onLoadNotes(
@@ -89,24 +88,6 @@ class NoteBloc extends Bloc<NoteEvent, NoteState> {
       add(LoadNotesEvent());
     } catch (e) {
       emit(NotesSyncError(message: e.toString()));
-    }
-  }
-
-  Future<void> _onSetSyncOptions(
-      SetSyncOptionsEvent event, Emitter<NoteState> emit) async {
-    try {
-      await syncService.setSyncOptions(
-        autoSync: event.autoSync,
-        syncInterval: event.syncInterval,
-        syncOnWifiOnly: event.syncOnWifiOnly,
-      );
-      emit(SyncOptionsSet(
-        autoSync: event.autoSync,
-        syncInterval: event.syncInterval,
-        syncOnWifiOnly: event.syncOnWifiOnly,
-      ));
-    } catch (e) {
-      emit(NotesError(message: e.toString()));
     }
   }
 }
