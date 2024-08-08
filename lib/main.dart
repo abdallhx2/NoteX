@@ -4,12 +4,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:notex/bloc/note_bloc/note_bloc.dart';
 import 'package:notex/bloc/user_bloc/user_bloc.dart';
 import 'package:notex/database/Firebase/firebase_options.dart';
-import 'package:notex/pages/auth_pages/authLogin.dart';
-import 'package:notex/pages/homePage/body.dart';
+
 import 'package:notex/repositories/note_repository.dart';
 import 'package:notex/repositories/user_repository.dart';
 import 'package:notex/route/appRoute.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -44,7 +42,7 @@ class _MyAppState extends State<MyApp> {
       ],
       child: MaterialApp(
         title: 'Notex',
-        initialRoute: AppRoutes.splash,
+        initialRoute: AppRoutes.home,
         onGenerateRoute: AppRoutes.generateRoute,
       ),
     );

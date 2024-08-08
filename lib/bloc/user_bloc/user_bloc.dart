@@ -16,7 +16,6 @@ class UserBloc extends Bloc<UserEvent, UserState> {
   UserBloc({required this.userRepository, required this.syncService})
       : super(UserLoading()) {
     on<LoginEvent>(_onLogin);
-    on<LogoutEvent>(_onLogout);
     on<LoadUserEvent>(_onLoadUser);
     on<UpdateUserEvent>(_onUpdateUser);
   }
@@ -51,6 +50,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
 
       SharedPreferences prefs = await SharedPreferences.getInstance();
       await prefs.setString('userId', userCredential.user!.uid);
+      await syncService.syncFromCloud();
       emit(UserLoggedIn(userId: userCredential.user!.uid));
     } catch (e) {
       emit(UserError(message: e.toString()));

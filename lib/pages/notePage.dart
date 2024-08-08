@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:notex/bloc/note_bloc/note_bloc.dart';
 import 'package:notex/bloc/note_bloc/note_event.dart';
 import 'package:notex/models/note.dart';
+import 'package:flutter_quill/flutter_quill.dart' as quill;
+import 'dart:convert'; // لإضافة الدعم لـ JSON
 
 class NewNotePage extends StatefulWidget {
   final Note? note;
@@ -15,16 +17,20 @@ class NewNotePage extends StatefulWidget {
 
 class _NewNotePageState extends State<NewNotePage> {
   final TextEditingController _titleController = TextEditingController();
-  final TextEditingController _contentController = TextEditingController();
-  final FocusNode _titleFocusNode = FocusNode();
-  final FocusNode _contentFocusNode = FocusNode();
+  late quill.QuillController _contentController;
 
   @override
   void initState() {
     super.initState();
+    _contentController = widget.note != null
+        ? quill.QuillController(
+            document: quill.Document.fromJson(widget.note!.content as List),
+            selection: TextSelection.collapsed(offset: 0),
+          )
+        : quill.QuillController.basic();
+
     if (widget.note != null) {
       _titleController.text = widget.note!.title;
-      _contentController.text = widget.note!.content;
     }
   }
 
@@ -32,8 +38,6 @@ class _NewNotePageState extends State<NewNotePage> {
   void dispose() {
     _titleController.dispose();
     _contentController.dispose();
-    _titleFocusNode.dispose();
-    _contentFocusNode.dispose();
     super.dispose();
   }
 
@@ -49,25 +53,23 @@ class _NewNotePageState extends State<NewNotePage> {
           children: [
             TextField(
               controller: _titleController,
-              focusNode: _titleFocusNode,
               decoration: InputDecoration(
                 labelText: 'العنوان',
               ),
             ),
             SizedBox(height: 16.0),
-            TextField(
-              controller: _contentController,
-              focusNode: _contentFocusNode,
-              decoration: InputDecoration(
-                labelText: 'المحتوى',
+            Expanded(
+              child: quill.QuillEditor.basic(
+                controller: _contentController,
+                // readOnly: false, // تعيين false للسماح بالتعديل
               ),
-              maxLines: 10,
             ),
+            quill.QuillToolbar.simple(controller: _contentController),
             SizedBox(height: 16.0),
             ElevatedButton(
               onPressed: () {
                 if (_titleController.text.isEmpty ||
-                    _contentController.text.isEmpty) {
+                    _contentController.document.toPlainText().trim().isEmpty) {
                   // عرض رسالة خطأ أو إشعار
                   return;
                 }
@@ -75,7 +77,9 @@ class _NewNotePageState extends State<NewNotePage> {
                 final updatedNote = Note(
                   id: widget.note?.id ?? DateTime.now().toString(),
                   title: _titleController.text,
-                  content: _contentController.text,
+                  content: jsonEncode(_contentController.document
+                      .toDelta()
+                      .toJson()), // تحويل Delta إلى JSON
                   date: DateTime.now(),
                   lastUpdated: DateTime.now(),
                   userId: '',

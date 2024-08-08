@@ -7,14 +7,10 @@ class NoteStream {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   Stream<List<Note>> getNotesStream() {
-    // الحصول على المستخدم الحالي
     User? user = _auth.currentUser;
     if (user == null) {
-      // إذا لم يكن هناك مستخدم مسجل الدخول، قم بإرجاع stream فارغ
       return Stream.value([]);
     }
-
-    // الحصول على Stream من مجموعة 'notes' الخاصة بالمستخدم الحالي في Firestore
     return _firestore
         .collection('users')
         .doc(user.uid)
@@ -25,7 +21,7 @@ class NoteStream {
         final data = doc.data();
         return Note(
           id: doc.id,
-          userId: user.uid, // إضافة معرف المستخدم
+          userId: user.uid, 
           title: data['title'] ?? '',
           content: data['content'] ?? '',
           date: (data['date'] as Timestamp).toDate(),

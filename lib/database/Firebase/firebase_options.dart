@@ -4,7 +4,6 @@ import 'package:notex/models/note.dart';
 import 'package:notex/models/user.dart' as AppUser;
 import 'package:notex/repositories/note_repository.dart';
 import 'package:notex/repositories/user_repository.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class SyncService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -29,7 +28,6 @@ class SyncService {
     List<Note> localNotes = await _noteRepository.getNotes(userId);
     List<String> localNoteIds = localNotes.map((note) => note.id).toList();
 
-    // 1. تحديث/إضافة الملاحظات إلى Firestore
     for (var note in localNotes) {
       await _firestore
           .collection('users')
@@ -39,7 +37,6 @@ class SyncService {
           .set(note.toMap());
     }
 
-    // 2. حذف الملاحظات التي لم تعد موجودة في قاعدة البيانات المحلية
     QuerySnapshot snapshot = await _firestore
         .collection('users')
         .doc(userId)
@@ -53,7 +50,7 @@ class SyncService {
     }
   }
 
-  // دالة لمزامنة البيانات من Firestore إلى قاعدة البيانات المحلية
+
   Future<void> syncFromCloud() async {
     String userId = await getUserId();
     QuerySnapshot snapshot = await _firestore
@@ -62,11 +59,6 @@ class SyncService {
         .collection('notes')
         .get();
 
-    List<String> cloudNoteIds = snapshot.docs.map((doc) => doc.id).toList();
-    List<Note> localNotes = await _noteRepository.getNotes(userId);
-    List<String> localNoteIds = localNotes.map((note) => note.id).toList();
-
-    // 1. تحديث/إضافة الملاحظات من Cloud إلى قاعدة البيانات المحلية
     for (var doc in snapshot.docs) {
       Note note = Note.fromMap(doc.data() as Map<String, dynamic>);
       Note? existingNote = await _noteRepository.getNoteById(note.id);
@@ -79,16 +71,9 @@ class SyncService {
         await _noteRepository.addNote(note);
       }
     }
-
-    // 2. حذف الملاحظات التي تم حذفها من Cloud
-    for (var id in localNoteIds) {
-      if (!cloudNoteIds.contains(id)) {
-        await _noteRepository.deleteNote(id);
-      }
-    }
   }
 
-  // دالة لمزامنة ملاحظة واحدة إلى Cloud
+
   Future<void> syncNote(Note note) async {
     String userId = await getUserId();
     await _firestore
@@ -99,24 +84,11 @@ class SyncService {
         .set(note.toMap());
   }
 
-  // دالة لمزامنة كاملة بين قاعدة البيانات المحلية و Firestore
   Future<void> fullSync(String userId) async {
     await syncToCloud();
     await syncFromCloud();
   }
 
-  // // دالة لمزامنة بيانات المستخدم
-  // Future<void> syncUserData() async {
-  //   String userId = await getUserId();
-  //   AppUser.UserModels? localUser = await _userRepository.getUserById(userId);
-    
-  //   if (localUser != null) {
-  //     await _firestore
-  //         .collection('users')
-  //         .doc(userId)
-  //         .set(localUser.toMap());
-  //   }
-  // }
 
   // دالة لاسترجاع بيانات المستخدم من Firestore
   Future<void> fetchUserDataFromCloud() async {

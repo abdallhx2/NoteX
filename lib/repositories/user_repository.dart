@@ -53,29 +53,29 @@ class UserRepository {
     }
   }
 
-  Future<String?> getUserName() async {
-    try {
-      User? user = FirebaseAuth.instance.currentUser;
-      if (user == null) {
-        throw Exception('No user logged in');
-      }
-      String userId = user.uid;
+  // Future<String?> getUserName() async {
+  //   try {
+  //     User? user = FirebaseAuth.instance.currentUser;
+  //     if (user == null) {
+  //       throw Exception('No user logged in');
+  //     }
+  //     String userId = user.uid;
 
-      DocumentSnapshot userDoc = await FirebaseFirestore.instance
-          .collection('users')
-          .doc(userId)
-          .get();
+  //     DocumentSnapshot userDoc = await FirebaseFirestore.instance
+  //         .collection('users')
+  //         .doc(userId)
+  //         .get();
 
-      if (userDoc.exists) {
-        return userDoc['name'] as String?;
-      } else {
-        return null;
-      }
-    } catch (e) {
-      print('Failed to get user name: ${e.toString()}');
-      return null;
-    }
-  }
+  //     if (userDoc.exists) {
+  //       return userDoc['name'] as String?;
+  //     } else {
+  //       return null;
+  //     }
+  //   } catch (e) {
+  //     print('Failed to get user name: ${e.toString()}');
+  //     return null;
+  //   }
+  // }
 
   // Future<String?> getUserNameById(String id) async {
   //   final db = await DBConnection().database;
