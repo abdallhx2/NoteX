@@ -42,7 +42,7 @@ class _MyAppState extends State<MyApp> {
       ],
       child: MaterialApp(
         title: 'Notex',
-        initialRoute: AppRoutes.home,
+        initialRoute: AppRoutes.main,
         onGenerateRoute: AppRoutes.generateRoute,
       ),
     );

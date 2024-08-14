@@ -1,6 +1,4 @@
-import 'package:notex/models/user.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:path/path.dart';
 
 class DBConnection {
   static final DBConnection _instance = DBConnection._internal();
@@ -17,11 +15,9 @@ class DBConnection {
   }
 
   Future<Database> initDatabase() async {
-    final dbPath = await getDatabasesPath();
-    final path = join(dbPath, 'note_data.db');
-
+    final creatDB = ('note_data.db');
     return await openDatabase(
-      path,
+      creatDB,
       version: 66,
       onCreate: (db, version) async {
         await db.execute(
