@@ -1,9 +1,12 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:notex/bloc/note_bloc/note_bloc.dart';
 import 'package:notex/bloc/note_bloc/note_event.dart';
 import 'package:notex/models/note.dart';
 import 'package:notex/pages/notePage.dart';
+import 'package:flutter_quill/flutter_quill.dart' as quill;
 
 class NoteCard extends StatelessWidget {
   final Note note;
@@ -12,6 +15,9 @@ class NoteCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final document = quill.Document.fromJson(jsonDecode(note.content));
+    final plainText = document.toPlainText();
+
     return Card(
       child: InkWell(
         onTap: () {
@@ -31,9 +37,11 @@ class NoteCard extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(note.title, style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold)),
+              Text(note.title,
+                  style:
+                      TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold)),
               SizedBox(height: 8.0),
-              Text(note.content, maxLines: 3, overflow: TextOverflow.ellipsis),
+              Text(plainText, maxLines: 3, overflow: TextOverflow.ellipsis),
             ],
           ),
         ),

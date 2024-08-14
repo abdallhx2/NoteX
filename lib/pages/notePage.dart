@@ -4,7 +4,7 @@ import 'package:notex/bloc/note_bloc/note_bloc.dart';
 import 'package:notex/bloc/note_bloc/note_event.dart';
 import 'package:notex/models/note.dart';
 import 'package:flutter_quill/flutter_quill.dart' as quill;
-import 'dart:convert'; // لإضافة الدعم لـ JSON
+import 'dart:convert';
 
 class NewNotePage extends StatefulWidget {
   final Note? note;
@@ -24,7 +24,7 @@ class _NewNotePageState extends State<NewNotePage> {
     super.initState();
     _contentController = widget.note != null
         ? quill.QuillController(
-            document: quill.Document.fromJson(widget.note!.content as List),
+            document: quill.Document.fromJson(jsonDecode(widget.note!.content)),
             selection: TextSelection.collapsed(offset: 0),
           )
         : quill.QuillController.basic();
@@ -45,7 +45,8 @@ class _NewNotePageState extends State<NewNotePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.note == null ? 'إضافة مذكرة' : 'تعديل مذكرة'),
+        title:
+            Text(widget.note == null ? 'إضافة مذكرة' : _titleController.text),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -61,10 +62,18 @@ class _NewNotePageState extends State<NewNotePage> {
             Expanded(
               child: quill.QuillEditor.basic(
                 controller: _contentController,
-                // readOnly: false, // تعيين false للسماح بالتعديل
               ),
             ),
-            quill.QuillToolbar.simple(controller: _contentController),
+            quill.QuillToolbar.simple(controller: _contentController,
+             configurations:  quill.QuillSimpleToolbarConfigurations(
+    buttonOptions: QuillToolbarButtonOptions(
+      base: QuillToolbarBaseButtonOptions(
+        globalIconSize: 20,
+        globalIconButtonFactor: 1.4,
+      ),
+    ),
+  ),),
+            
             SizedBox(height: 16.0),
             ElevatedButton(
               onPressed: () {
@@ -77,9 +86,8 @@ class _NewNotePageState extends State<NewNotePage> {
                 final updatedNote = Note(
                   id: widget.note?.id ?? DateTime.now().toString(),
                   title: _titleController.text,
-                  content: jsonEncode(_contentController.document
-                      .toDelta()
-                      .toJson()), // تحويل Delta إلى JSON
+                  content: jsonEncode(
+                      _contentController.document.toDelta().toJson()),
                   date: DateTime.now(),
                   lastUpdated: DateTime.now(),
                   userId: '',
