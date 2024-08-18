@@ -1,13 +1,13 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:notex/bloc/note_bloc/note_bloc.dart';
-import 'package:notex/bloc/user_bloc/user_bloc.dart';
-import 'package:notex/database/Firebase/firebase_options.dart';
+import 'package:notex/src/bloc/note_bloc/note_bloc.dart';
+import 'package:notex/src/bloc/user_bloc/user_bloc.dart';
+import 'package:notex/src/services/database_services/firebase_options.dart';
 
-import 'package:notex/repositories/note_repository.dart';
-import 'package:notex/repositories/user_repository.dart';
-import 'package:notex/route/appRoute.dart';
+import 'package:notex/src/repositories/note_repository.dart';
+import 'package:notex/src/repositories/user_repository.dart';
+import 'package:notex/src/route/appRoute.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

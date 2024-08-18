@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:notex/bloc/user_bloc/user_bloc.dart';
-import 'package:notex/bloc/user_bloc/user_event.dart';
-import 'package:notex/bloc/user_bloc/user_state.dart';
-import 'package:notex/pages/auth_pages/authSignup.dart';
+import 'package:notex/src/bloc/user_bloc/user_bloc.dart';
+import 'package:notex/src/bloc/user_bloc/user_event.dart';
+import 'package:notex/src/bloc/user_bloc/user_state.dart';
+import 'package:notex/src/screens/auth_screen/authSignup.dart';
 
 class SignInPage extends StatefulWidget {
   @override

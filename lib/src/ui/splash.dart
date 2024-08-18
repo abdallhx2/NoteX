@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:notex/pages/homePage/body.dart';
+import 'package:notex/src/screens/homePage/body.dart';
 
 void main() => runApp(MyApp());
 

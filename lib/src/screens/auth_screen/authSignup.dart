@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:notex/bloc/user_bloc/user_bloc.dart';
-import 'package:notex/bloc/user_bloc/user_state.dart';
-import 'package:notex/models/user.dart';
-import 'package:notex/repositories/user_repository.dart';
+import 'package:notex/src/bloc/user_bloc/user_bloc.dart';
+import 'package:notex/src/bloc/user_bloc/user_state.dart';
+import 'package:notex/src/models/user.dart';
+import 'package:notex/src/repositories/user_repository.dart';
 
 class SignUpPage extends StatefulWidget {
   @override

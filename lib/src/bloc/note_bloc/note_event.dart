@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:notex/models/note.dart';
+import 'package:notex/src/models/note.dart';
 
 abstract class NoteEvent extends Equatable {
   const NoteEvent();

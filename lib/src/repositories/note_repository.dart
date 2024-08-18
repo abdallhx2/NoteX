@@ -1,7 +1,7 @@
 
 
-import 'package:notex/database/SQLite/database_connction.dart';
-import 'package:notex/models/note.dart';
+import 'package:notex/src/services/database_services/database_connction.dart';
+import 'package:notex/src/models/note.dart';
 import 'package:sqflite/sqflite.dart';
 
 class NoteRepository {

@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:notex/models/user.dart';
+import 'package:notex/src/models/user.dart';
 
 abstract class UserState extends Equatable {
   const UserState();
@@ -56,7 +56,7 @@ class UserNotRegistered extends UserState {
   @override
   List<Object> get props => [message];
 }
-// user_state.dart
+
 class UserNameLoaded extends UserState {
   final String userName;
 

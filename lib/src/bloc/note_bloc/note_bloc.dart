@@ -1,7 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:notex/bloc/user_bloc/user_bloc.dart';
-import 'package:notex/database/Firebase/firebase_options.dart';
-import 'package:notex/repositories/note_repository.dart';
+import 'package:notex/src/bloc/user_bloc/user_bloc.dart';
+import 'package:notex/src/services/database_services/firebase_options.dart';
+import 'package:notex/src/repositories/note_repository.dart';
 import 'note_event.dart';
 import 'note_state.dart';
 

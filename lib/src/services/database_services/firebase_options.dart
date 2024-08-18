@@ -1,9 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:notex/models/note.dart';
-import 'package:notex/models/user.dart' as AppUser;
-import 'package:notex/repositories/note_repository.dart';
-import 'package:notex/repositories/user_repository.dart';
+import 'package:notex/src/models/note.dart';
+import 'package:notex/src/models/user.dart' as AppUser;
+import 'package:notex/src/repositories/note_repository.dart';
+import 'package:notex/src/repositories/user_repository.dart';
 
 class SyncService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;

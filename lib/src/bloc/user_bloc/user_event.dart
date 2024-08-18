@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:notex/models/user.dart';
+import 'package:notex/src/models/user.dart';
 
 abstract class UserEvent extends Equatable {
   const UserEvent();
